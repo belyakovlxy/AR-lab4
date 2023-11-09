@@ -78,13 +78,13 @@ public class AugmentedImageRenderer {
     imageFrameLowerRight.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f);
     imageFrameLowerRight.setBlendMode(BlendMode.AlphaBlending);
   }
-
   public void draw(
         float[] viewMatrix,
         float[] projectionMatrix,
         AugmentedImage augmentedImage,
         Anchor centerAnchor,
-        float[] colorCorrectionRgba) {
+        float[] colorCorrectionRgba,
+        boolean removeWalls) {
     float[] tintColor =
             convertHexToColor(TINT_COLORS_HEX[augmentedImage.getIndex() % TINT_COLORS_HEX.length]);
 
@@ -102,22 +102,16 @@ public class AugmentedImageRenderer {
     // You mustWe need to do this adjustment because the maze obj file
     // is not centered around origin. Normally when you
     // work with your own model, you don't have this problem.
-    Pose mazeModelLocalOffset = Pose.makeTranslation(
-            -251.3f * mazeScaleFactor,
-            0.0f,
-            129.0f * mazeScaleFactor);
-    anchorPose.compose(mazeModelLocalOffset).toMatrix(modelMatrix, 0);
-    mazeRenderer.updateModelMatrix(modelMatrix, mazeScaleFactor, mazeScaleFactor/10.0f, mazeScaleFactor); // This line relies on a change in ObjectRenderer.updateModelMatrix later in this codelab.
-    mazeRenderer.draw(viewMatrix, projectionMatrix, colorCorrectionRgba, tintColor);
-
-    // Render Andy, standing on top of the maze
-    Pose andyModelLocalOffset = Pose.makeTranslation(
-            0.0f,
-            0.1f,
-            0.0f);
-    anchorPose.compose(andyModelLocalOffset).toMatrix(modelMatrix, 0);
-    andyRenderer.updateModelMatrix(modelMatrix, 0.05f); // 0.05f is a Magic number to scale
-    andyRenderer.draw(viewMatrix, projectionMatrix, colorCorrectionRgba, tintColor);
+    if (!removeWalls)
+    {
+      Pose mazeModelLocalOffset = Pose.makeTranslation(
+              -251.3f * mazeScaleFactor,
+              0.0f,
+              129.0f * mazeScaleFactor);
+      anchorPose.compose(mazeModelLocalOffset).toMatrix(modelMatrix, 0);
+      mazeRenderer.updateModelMatrix(modelMatrix, mazeScaleFactor, mazeScaleFactor/10.0f, mazeScaleFactor); // This line relies on a change in ObjectRenderer.updateModelMatrix later in this codelab.
+      mazeRenderer.draw(viewMatrix, projectionMatrix, colorCorrectionRgba, tintColor);
+    }
 
     // Use these code to replace previous code for rendering the Andy object
     //

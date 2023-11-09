@@ -24,8 +24,10 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
@@ -79,6 +81,7 @@ public class AugmentedImageActivity extends AppCompatActivity implements GLSurfa
 
   private boolean installRequested;
 
+  private boolean removeWalls;
   private Session session;
   private final SnackbarHelper messageSnackbarHelper = new SnackbarHelper();
   private DisplayRotationHelper displayRotationHelper;
@@ -121,6 +124,14 @@ public class AugmentedImageActivity extends AppCompatActivity implements GLSurfa
         .into(fitToScanView);
 
     installRequested = false;
+
+    removeWalls = false;
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    removeWalls = !removeWalls;
+    return super.onTouchEvent(event);
   }
 
   @Override
@@ -379,7 +390,7 @@ public class AugmentedImageActivity extends AppCompatActivity implements GLSurfa
       switch (augmentedImage.getTrackingState()) {
         case TRACKING:
           augmentedImageRenderer.draw(
-              viewmtx, projmtx, augmentedImage, centerAnchor, colorCorrectionRgba);
+              viewmtx, projmtx, augmentedImage, centerAnchor, colorCorrectionRgba, removeWalls);
           break;
         default:
           break;
